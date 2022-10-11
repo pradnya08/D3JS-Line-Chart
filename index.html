@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multiline chart!</title>
+    <script src="./lib/d3.js"></script>
+    <link rel ="stylesheet" href="style.css">
+</head>
+<body>
+<div class="title">
+    <h2>Climate change trends</h2>
+</div>
+<div class="heading"><h4>CO2 and Temperature trends </h4></div>
+<div id="container", class="containerBox">
+</div>
+<script>
+    d3.csv("./data/dt.csv",d=>(
+            {
+                Year: new Date(d['date']),
+                CO2:Number(d['CO2 (ppm)']),
+                Temp:Number(d['GlobalTemperature'])
+            })
+    ).then(generateLineChart);
+    function generateLineChart(data){
+        const width=1000,height = 800;
+        const margin =  {top:70,right:70,bottom:70,left:70};
+        const svg = d3.select("#container")
+            .append("svg")
+            .attr("viewBox",`0 0 ${width} ${height}`)
+            .attr("width","50vw")
+            .attr("height","40vw")
+            .attr("class", "svgElement")
+
+        // Creating scales
+        const xScale = d3.scaleTime().domain(d3.extent(data, d=>d['Year'])).range([margin.left, width - margin.right]);
+        const yScale = d3.scaleLinear().domain(d3.extent(data, d=>d['Temp'])).range([height - margin.bottom, margin.top]);
+        const yScale2 = d3.scaleLinear().domain(d3.extent(data, d=>d['CO2'])).range([height - margin.bottom, margin.top]);
+        
+        // Defining axes
+        const xAxis = svg.append("g")
+                .attr("transform",`translate(${0},${height-margin.bottom})`)
+                .call(d3.axisBottom().scale(xScale))
+        const yAxis = svg.append("g")
+            .attr("transform",`translate(${margin.left},${0})`)
+            .call(d3.axisLeft().scale(yScale))
+        const yAxis2 = svg.append("g")
+            .attr("transform",`translate(${width - margin.right},${0})`)
+            .call(d3.axisRight().scale(yScale2))
+        
+        // Add labels
+        xAxis.append('text')
+            .attr('class', 'axis-label')
+            .attr('y', margin.bottom - 10)
+            .attr('x', width / 2)
+            .attr('fill', 'black')
+            .text("Year");
+        
+        yAxis.append('text')
+            .attr('class', 'axis-label')
+            .attr('y', -50)
+            .attr('x', -height / 2)
+            .attr('fill', 'black')
+            .attr('transform', `rotate(-90)`)
+            .attr('text-anchor', 'middle')
+            .text("Temperature");
+
+        yAxis.append('text')
+            .attr('class', 'axis-label')
+            .attr('y', -(width - 88))
+            .attr('x', height / 2)
+            .attr('fill', 'black')
+            .attr('transform', `rotate(90)`)
+            .attr('text-anchor', 'middle')
+            .text("CO2");
+
+        // Generating line
+        const lineGenTemp = d3.line()
+            .x(d=>xScale(d.Year))
+            .y(d=>yScale(d.Temp))
+            .curve(d3.curveBasis)
+        const lineGenCO2 = d3.line()
+            .x(d=>xScale(d.Year))
+            .y(d=>yScale2(d.CO2))
+
+        const lineChart = svg.selectAll('.Line')
+            .data([data])
+            .enter()
+        lineChart.append("path")
+            .attr("d",d=>lineGenTemp(d))
+            .attr("class", "clsTemp")
+        lineChart.append("path")
+            .attr("d",d=>lineGenCO2(d))
+            .attr("class", "clsCO2")
+
+        // Adding legend
+        legend = svg.append("g")
+            .attr("class","legend")
+        
+        legend.append('rect')
+            .attr('x', margin.left + 30)
+            .attr('y', margin.top + 20)
+            .attr('width', 20)
+            .attr('height', 20)
+            .attr('class', 'legendCO2')
+
+        legend.append('text')
+            .attr('x', margin.left + 55)
+            .attr('y', margin.top + 40)
+            .text('CO2')
+
+        legend.append('rect')
+            .attr('x', margin.left + 30)
+            .attr('y', margin.top + 50)
+            .attr('width', 20)
+            .attr('height', 20)
+            .attr('class', 'legendTemp')
+
+
+        legend.append('text')
+            .attr('x', margin.left + 55)
+            .attr('y', margin.top + 70)
+            .text('Temperature')
+    }
+
+</script>
+</body>
+</html>

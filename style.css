@@ -1,0 +1,43 @@
+.title{
+    font-size: x-large;
+    font-family: sans-serif;
+    margin-bottom: 10px;
+    margin-left: 25%;
+}
+body{
+    background-color: #d8f0b1
+}
+
+path{
+    stroke: black;
+    stroke-width: 1px;
+    fill:none;
+}
+.heading{
+    margin-left: 25%;
+}
+.clsTemp{
+    stroke: #660000;
+    stroke-width: 4px;
+    fill:none;
+}
+.clsCO2{
+    stroke: #feb24c;
+    stroke-width: 4px;
+    fill:none;
+}
+.legendCO2{
+    fill:#feb24c
+}
+.legendTemp{
+    fill:#660000
+}
+.svgElement{
+    background-color: aliceblue;
+}
+.containerBox{
+    margin-left: 25%;
+}
+text{
+    font-size: 18pt;
+}
